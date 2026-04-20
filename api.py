@@ -4,55 +4,48 @@ app = FastAPI()
 
 db = []
 
+
 def analyze(text: str):
     t = text.lower()
 
     score = 60
     advice = []
 
-    # 📌 расплод
     if "расплод" in t:
         score += 20
     else:
         score -= 15
-        advice.append("⚠️ мало расплода — проверь развитие семьи")
+        advice.append("⚠️ мало расплода")
 
-    # 📌 мёд
     if "мёд" in t:
         score += 15
     else:
         score -= 10
-        advice.append("🍯 запасы мёда слабые")
+        advice.append("🍯 мало запасов мёда")
 
-    # 📌 матка
     if "матка" in t:
         if "нет" in t:
             score -= 40
-            advice.append("🚨 нет матки — критично")
+            advice.append("🚨 нет матки — срочно проверить")
         else:
             score += 15
 
-    # 📌 агрессия / риск
-    if "злая" in t or "агрессив" in t:
-        score -= 10
-        advice.append("🐝 повышенная агрессия — возможен стресс")
-
-    # 📊 финальная оценка
     if score >= 80:
-        advice.append("🟢 сильная и стабильная семья")
+        advice.append("🟢 сильная семья")
     elif score >= 60:
-        advice.append("🟡 нормальное состояние, но нужен контроль")
+        advice.append("🟡 нормальное состояние")
     elif score >= 40:
-        advice.append("🟠 ослабление семьи")
+        advice.append("🟠 ослабленная семья")
     else:
-        advice.append("🔴 критическое состояние — срочное вмешательство")
+        advice.append("🔴 критическое состояние")
 
     return max(0, min(100, score)), advice
 
 
 @app.get("/")
 def root():
-    return {"status": "bee-api running"}
+    return {"status": "ok"}
+
 
 @app.post("/add")
 def add(hive: int, text: str):
@@ -69,6 +62,7 @@ def add(hive: int, text: str):
         "score": score,
         "advice": advice
     }
+
 
 @app.get("/hives")
 def hives():
